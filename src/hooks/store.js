@@ -72,6 +72,10 @@ export const useAuthState = create(
   (set) => ({
     signUpToken: "",
     setSignUpToken: (token) => {set({ signUpToken: token })},
+    firstName:window.localStorage.getItem('firstName'),
+    setFirstName: (firstName) => {window.localStorage.setItem('firstName', firstName )},
+    lastName:window.localStorage.getItem('lastName'),
+    setLastName: (lastName) => {window.localStorage.setItem('lastName', lastName )},
     userEmail:window.localStorage.getItem('email'),
     setUserEmail: (email) => {window.localStorage.setItem('email', email )},
     authToken: window.localStorage.getItem('authToken'),

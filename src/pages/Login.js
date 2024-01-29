@@ -31,7 +31,8 @@ function Copyright(props) {
 
 export default function Login() {
   const [loading, setLoading] = React.useState(false);
-  const {setUserEmail,setAuthToken,setRefreshToken,setRole, setIsLoggedIn } = useAuthState();
+
+  const {setUserEmail,setAuthToken,setRefreshToken,setRole, setFirstName, setLastName } = useAuthState();
   var navigate = useNavigate()
   const authToken  = useAuthState((state)=>state.authToken)
   const handleSubmit = async (event) => {
@@ -44,11 +45,13 @@ export default function Login() {
         password: data.get('password')
       })
       setLoading(true)
-      console.log(response)
+      console.log({"response":response})
       setAuthToken(response?.data?.token)
       setRefreshToken(response?.data?.refreshToken)
       setRole(response?.data?.role)
       setUserEmail(response?.data?.username)
+      setFirstName(response?.data?.firstName)
+      setLastName(response?.data?.lastName)
 
     } catch (err) { 
       
@@ -60,6 +63,7 @@ export default function Login() {
     }
 
   };
+
 
   return (
       <Container component="main" maxWidth="xs" >

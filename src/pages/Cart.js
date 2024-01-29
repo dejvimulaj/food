@@ -9,6 +9,8 @@ import axios from '../api/axios';
 const Cart = () => {
     const {cartItems} = useCartStore();
     const userEmail = useAuthState((state)=>state.userEmail);
+    const firstName = useAuthState((state)=>state.firstName);
+    const lastName = useAuthState((state)=>state.lastName);
     const style = {
       position: 'absolute',
       top: '50%',
@@ -36,22 +38,27 @@ const Cart = () => {
       const handleCheckout = async (event) => {
         event.preventDefault()
         console.log(address)
+        console.log(cartItems)
+        const orderItems = cartItems.map(item => ({
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          productId: item.id
+        }));
+        console.log(orderItems)
         try {
           const response = await axios.post('/api/user/purchase',
           {
-              customer:{
+              "customer":{
+                firstName:firstName,
+                lastName: lastName,
                 email: userEmail
               },
-              order:{
+              "order":{
                   shippingAddress: address,
                   totalPrice,
                   totalQuantity
               },
-              orderItems:{
-                  quantity: cartItems.quantity,
-                  unitPrice: cartItems.unitPrice,
-                  productId: cartItems.id
-              }
+              orderItems
           })
           console.log(response)
 
