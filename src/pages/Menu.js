@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
 import CameraIcon from '@mui/icons-material/PhotoCamera';
@@ -13,9 +13,10 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import products from '../hooks/products';
-import useCartStore from '../hooks/store';
+import useCartStore, { useAuthState } from '../hooks/store';
 import { useCartChipStore } from '../hooks/store';
 import { Snackbar } from '@mui/material';
+import axios from '../api/axios';
 const Menu = () => {
     const {addItemToCart} = useCartStore()
     const productsForMenu = products;
@@ -28,6 +29,23 @@ const Menu = () => {
     
       setOpen(false);
     };
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+      const getData = async () => {
+        try {
+          const response = await axios.get('/api/products');
+          setData(response?.data?._embedded.products);
+          console.log(response.data._embedded.products);
+        } catch (err) {
+          // Handle errors if needed
+          console.error('Error fetching data:', err);
+        }
+      };
+  
+      // Call the function to initiate the data fetching
+      getData();
+    }, []);
 
 
   return (
@@ -61,7 +79,7 @@ const Menu = () => {
         </Box>
         <Container sx={{ py: 5 }} maxWidth="xl">
           <Grid container spacing={6}>
-            {productsForMenu.map((product) => (
+            { data.map((product) => (
               <Grid item key={product.id} xs={8} sm={6} md={4}>
                 <Card
                   sx={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor:"#dcedc8", borderRadius:"30px" }}
@@ -72,14 +90,14 @@ const Menu = () => {
                       // 16:9
                       pt: '56.25%',
                     }}
-                    image={product.image}
+                    image={product.imageUrl}
                   />
                   <CardContent sx={{ flexGrow: 1, display:"flex", justifyContent:"space-between" }}>
                     <Typography gutterBottom variant="h5" component="h2" sx={{fontWeight:"bold"}}>
                       {product.name}
                     </Typography>
                     <Typography color="primary.dark" variant="h5" sx={{marginRight:"10px", fontWeight:"bold"}}>
-                      {product.price}Lek
+                      {product.unitPrice}Lek
                     </Typography>
                   </CardContent>
                   <CardActions sx={{display:"flex", justifyContent:"center", marginBottom: "12px"  }}>

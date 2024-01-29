@@ -15,6 +15,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
+import { useAuthState } from '../hooks/store';
 
 function Copyright() {
   return (
@@ -72,6 +73,7 @@ const cards = [
 const defaultTheme = createTheme();
 
 export default function Main() {
+  const authToken  = useAuthState((state)=>state.authToken)
   return (
 <div>
       <main>
@@ -97,6 +99,7 @@ export default function Main() {
             Where you meet the delight of healthy indulgence!
             Best nutrition for the best engineers!
             </Typography>
+            {authToken.length>0 ? <></>:
             <Stack
               sx={{ pt: 4 }}
               direction="row"
@@ -112,11 +115,13 @@ export default function Main() {
                     or
             </Typography>
               <Button variant="outlined" sx={{borderRadius:"16px"}}>
-              <Link to="login" style={{textDecoration: 'none', color:"inherit"}}>
+              <Link to="signup" style={{textDecoration: 'none', color:"inherit"}}>
               Signup to order
           </Link>
               </Button>
             </Stack>
+            
+            }
           </Container>
         </Box>
         <Container sx={{ py: 8 }} maxWidth="xl">

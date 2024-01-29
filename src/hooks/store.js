@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import products from './products'
 import cartProducts from './CartProduct'
-import { persist } from "zustand/middleware";
+import { devtools, persist } from 'zustand/middleware';
 
 export const useCartChipStore = create((set) => ({
   cartCounter: 0,
@@ -10,7 +10,7 @@ export const useCartChipStore = create((set) => ({
   resetCounter: () => set({ cartCounter: 0 }),
 }))
 
-const useCartStore = create((set,get) => ({
+const useCartStore = create(((set,get) => ({
     cartItems: [],
   
     addItemToCart: (item) => {
@@ -58,6 +58,38 @@ const useCartStore = create((set,get) => ({
           }
         }
       },
-  }));
+      removeItemFromCart: (productId) => {
+        const updatedCartItems = get().cartItems.filter(
+          (item) => item.id !== productId
+        );
+        set({ cartItems: updatedCartItems });
+      }
+  })));
 
 export default useCartStore;
+
+export const useAuthState = create(
+  (set) => ({
+    signUpToken: "",
+    setSignUpToken: (token) => {set({ signUpToken: token })},
+    userEmail:window.localStorage.getItem('email'),
+    setUserEmail: (email) => {window.localStorage.setItem('email', email )},
+    authToken: window.localStorage.getItem('authToken'),
+    setAuthToken: (token) => {
+    window.localStorage.setItem('authToken', token)},
+    refreshToken:  JSON.stringify(window.localStorage.getItem('refreshToken')), 
+    setRefreshToken: (token) => {set({ refreshToken: token } )
+    window.localStorage.setItem('refreshToken', token)}, 
+    userRole: window.localStorage.getItem('Role' ),
+    setRole: (role) => {window.localStorage.setItem('Role', role )},
+    logOut: () => {set({ authToken: "", refreshToken: "", userRole: "" })
+    window.localStorage.setItem('authToken', "")
+    window.localStorage.setItem('refreshToken', "")
+    window.localStorage.setItem('Role', "" )}
+  }),
+
+
+  
+    );
+
+  

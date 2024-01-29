@@ -1,5 +1,5 @@
 import './App.css';
-import { Route, Routes} from "react-router-dom";
+import { BrowserRouter, Route, Routes} from "react-router-dom";
 import Layout from './Layout';
 import Menu from './pages/Menu';
 import Login from './pages/Login';
@@ -12,6 +12,7 @@ import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import SignUp from './pages/Signup';
+import { useAuthState } from './hooks/store';
 function App() {
   
 const theme = createTheme({
@@ -34,26 +35,41 @@ const theme = createTheme({
     }
   },
 });
+
+const authToken  = useAuthState((state)=>state.authToken)
+const userRole  = useAuthState((state)=>state.userRole)
   
   
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline/>
+      {/* <BrowserRouter> */}
         <Routes>
-          <Route path='/' element={<Layout/>}>
-            {/** UNPROTECTED ROUTES */}
-              <Route path='' element={<Main/>}></Route>
-              <Route path='menu' element={<Menu/>}></Route>
-              <Route path='about' element={<About/>}></Route>
+          
               <Route path='login' element={<Login/>}></Route>
               <Route path='signup' element={<SignUp/>}></Route>
+          <Route path='/' element={<Layout/>}>
+              <Route path='' element={<Main/>}></Route>
+              {authToken.length>0 ?
+              <>
+              <Route path='menu' element={<Menu/>}></Route>
+              <Route path='about' element={<About/>}></Route>
+              <Route path='cart' element={<Cart/>}></Route>
 
               {/**AUTHORIZED ROUTES */}
+              {userRole=="ADMIN"?
+              <>
               <Route path='orders' element={<Orders/>}></Route>
               <Route path='users' element={<Users/>}></Route>
-              <Route path='cart' element={<Cart/>}></Route>
+              
+              </>:<></>
+              }
+              
+              </>:<></>}
           </Route>
           </Routes> 
+      
+      {/* </BrowserRouter> */}
 
     </ThemeProvider>
   );

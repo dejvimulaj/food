@@ -12,13 +12,16 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useAuthState } from '../hooks/store';
+import axios from '../api/axios'
+import { redirect, useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        Bytebite
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -27,13 +30,35 @@ function Copyright(props) {
 }
 
 export default function Login() {
-  const handleSubmit = (event) => {
+  const [loading, setLoading] = React.useState(false);
+  const {setUserEmail,setAuthToken,setRefreshToken,setRole, setIsLoggedIn } = useAuthState();
+  var navigate = useNavigate()
+  const authToken  = useAuthState((state)=>state.authToken)
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    try {
+      const response = await axios.post('/api/auth/signin',
+      {
+        email: data.get('email'),
+        password: data.get('password')
+      })
+      setLoading(true)
+      console.log(response)
+      setAuthToken(response?.data?.token)
+      setRefreshToken(response?.data?.refreshToken)
+      setRole(response?.data?.role)
+      setUserEmail(response?.data?.username)
+
+    } catch (err) { 
+      
+    }
+    setLoading(false)
+    if(loading == false){
+      navigate("/")
+
+    }
+
   };
 
   return (
